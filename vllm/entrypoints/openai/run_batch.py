@@ -3,6 +3,7 @@
 
 import asyncio
 import contextlib
+import ipaddress
 import json
 import sys
 import tempfile
@@ -447,6 +448,22 @@ async def write_file(
         await write_local_file(path_or_url, batch_outputs)
 
 
+def _is_private_or_reserved_hostname(hostname: str) -> bool:
+    """Check if a hostname resolves to a private, loopback, or reserved IP."""
+    try:
+        addr = ipaddress.ip_address(hostname)
+        return (
+            addr.is_private
+            or addr.is_loopback
+            or addr.is_link_local
+            or addr.is_reserved
+            or addr.is_multicast
+        )
+    except ValueError:
+        # Not a raw IP; hostname-based — allow (DNS resolution happens later)
+        return False
+
+
 async def download_bytes_from_url(
     url: str,
     allowed_media_domains: list[str] | None = None,
@@ -490,6 +507,18 @@ async def download_bytes_from_url(
             # Use the normalized URL to prevent parsing discrepancies
             # between urllib3 and aiohttp (e.g. backslash-@ attacks).
             url = url_spec.url
+        else:
+            # Even without an allowlist, block requests to private/reserved
+            # IP addresses to prevent SSRF attacks against internal services
+            # and cloud metadata endpoints.
+            url_spec = parse_url(url)
+            if url_spec.hostname and _is_private_or_reserved_hostname(
+                url_spec.hostname
+            ):
+                raise ValueError(
+                    f"Requests to private/reserved IP addresses are not "
+                    f"allowed: {url_spec.hostname}"
+                )
 
         async with (
             aiohttp.ClientSession() as session,

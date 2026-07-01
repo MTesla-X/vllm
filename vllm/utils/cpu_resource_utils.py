@@ -168,7 +168,7 @@ def _get_cpu_list() -> list[LogicalCPUInfo]:
         return _synthesize_cpu_list()
 
     lscpu_output = subprocess.check_output(
-        "lscpu --json --extended=CPU,CORE,NODE --online", shell=True, text=True
+        ["lscpu", "--json", "--extended=CPU,CORE,NODE", "--online"], text=True
     )
 
     # For platforms without NUMA, map bare `-` node to 0 so non-NUMA

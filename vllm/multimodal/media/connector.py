@@ -5,6 +5,7 @@ import asyncio
 import atexit
 import contextlib
 import hashlib
+import ipaddress
 import os
 import tempfile
 import time
@@ -272,6 +273,21 @@ class MediaConnector:
 
         return media_io.load_file(filepath)
 
+    @staticmethod
+    def _is_private_or_reserved_ip(hostname: str) -> bool:
+        """Check if hostname is a private/reserved/loopback IP address."""
+        try:
+            addr = ipaddress.ip_address(hostname)
+            return (
+                addr.is_private
+                or addr.is_loopback
+                or addr.is_link_local
+                or addr.is_reserved
+                or addr.is_multicast
+            )
+        except ValueError:
+            return False
+
     def _assert_url_in_allowed_media_domains(self, url_spec: Url) -> None:
         if (
             self.allowed_media_domains
@@ -281,6 +297,13 @@ class MediaConnector:
                 f"The URL must be from one of the allowed domains: "
                 f"{self.allowed_media_domains}. Input URL domain: "
                 f"{url_spec.hostname}"
+            )
+
+        # Block requests to private/reserved IPs to prevent SSRF
+        if url_spec.hostname and self._is_private_or_reserved_ip(url_spec.hostname):
+            raise ValueError(
+                f"Requests to private/reserved IP addresses are not "
+                f"allowed: {url_spec.hostname}"
             )
 
     def load_from_url(
