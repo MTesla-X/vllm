@@ -410,7 +410,7 @@ def _get_language_model_for_seq_cls(model) -> nn.Module:
             lm = model.get_language_model()
             if lm is not model:
                 return lm
-        except Exception:
+        except (AttributeError, NotImplementedError):
             pass
 
     for attr_name in ("language_model", "lm", "text_model"):

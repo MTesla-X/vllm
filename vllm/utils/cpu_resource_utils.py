@@ -24,7 +24,7 @@ class LogicalCPUInfo:
     def _int(cls, value: str) -> int:
         try:
             int_value = int(value)
-        except Exception:
+        except (ValueError, TypeError):
             int_value = -1
         return int_value
 

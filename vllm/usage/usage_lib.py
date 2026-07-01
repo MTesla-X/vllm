@@ -182,7 +182,7 @@ class UsageMessage:
             self.gpu_memory_per_device = utils.get_device_hbm_limit()
             self.cuda_runtime = "tpu_inference"
             return True
-        except Exception:
+        except (ImportError, AttributeError):
             return False
 
     def _report_usage_once(

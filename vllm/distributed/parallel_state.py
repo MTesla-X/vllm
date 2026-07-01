@@ -2058,7 +2058,9 @@ def is_global_first_rank() -> bool:
         return torch.distributed.get_rank() == 0
 
     except Exception:
-        # If anything goes wrong, assume this is the first rank
+        logger.debug(
+            "Failed to determine global rank, assuming first rank", exc_info=True
+        )
         return True
 
 
@@ -2079,9 +2081,12 @@ def is_local_first_rank() -> bool:
         # note: envs.LOCAL_RANK is set when using env:// launchers (e.g., torchrun)
         try:
             return int(envs.LOCAL_RANK) == 0  # type: ignore[arg-type]
-        except Exception:
+        except (TypeError, ValueError):
             return torch.distributed.get_rank() == 0
     except Exception:
+        logger.debug(
+            "Failed to determine local rank, assuming first rank", exc_info=True
+        )
         return True
 
 

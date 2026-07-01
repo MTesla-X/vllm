@@ -246,7 +246,7 @@ class BaseRenderer(ABC, Generic[_T]):
                 elapsed = time.perf_counter() - start_time
                 logger.info("Multi-modal warmup completed in %.3fs", elapsed)
             except Exception:
-                logger.warning("Multi-modal warmup failed")
+                logger.warning("Multi-modal warmup failed", exc_info=True)
             finally:
                 self.clear_mm_cache()
 

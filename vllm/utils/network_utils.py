@@ -50,7 +50,7 @@ def get_ip() -> str:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))  # Doesn't need to be reachable
             return s.getsockname()[0]
-    except Exception:
+    except OSError:
         pass
 
     # try ipv6
@@ -60,7 +60,7 @@ def get_ip() -> str:
             # https://developers.google.com/speed/public-dns/docs/using#addresses
             s.connect(("2001:4860:4860::8888", 80))  # Doesn't need to be reachable
             return s.getsockname()[0]
-    except Exception:
+    except OSError:
         pass
 
     warnings.warn(

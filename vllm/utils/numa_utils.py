@@ -52,7 +52,7 @@ def _can_set_mempolicy() -> bool:
             ctypes.byref(mode), None, ctypes.c_ulong(0), None, ctypes.c_ulong(0)
         )
         return ret == 0
-    except Exception:
+    except (OSError, AttributeError):
         return False
 
 

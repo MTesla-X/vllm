@@ -63,7 +63,8 @@ def _maybe_json_dict(path: str | PathLike) -> dict[str, str]:
     with open(path) as f:
         try:
             return json.loads(f.read())
-        except Exception:
+        except (json.JSONDecodeError, ValueError):
+            logger.debug("Failed to parse JSON from %s", path)
             return dict[str, str]()
 
 
@@ -74,7 +75,7 @@ def _maybe_space_split_dict(path: str | PathLike) -> dict[str, str]:
             try:
                 model_name, redirect_name = line.strip().split()
                 parsed_dict[model_name] = redirect_name
-            except Exception:
+            except ValueError:
                 pass
     return parsed_dict
 

@@ -34,7 +34,7 @@ class GCDebugConfig:
                 json_conf = json.loads(gc_debug_conf)
                 self.enabled = True
                 self.top_objects = json_conf.get("top_objects", -1)
-            except Exception:
+            except (json.JSONDecodeError, KeyError, TypeError):
                 self.enabled = False
                 logger.error("Failed to parse VLLM_GC_DEBUG(%s)", envs.VLLM_GC_DEBUG)
         logger.debug("GC Debug Config. %s", str(self))
