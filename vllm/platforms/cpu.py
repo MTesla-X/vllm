@@ -56,7 +56,7 @@ class CpuPlatform(Platform):
         ):
             if (
                 subprocess.check_output(
-                    ["sysctl -n hw.optional.arm.FEAT_BF16"], shell=True
+                    ["sysctl", "-n", "hw.optional.arm.FEAT_BF16"]
                 ).strip()
                 == b"1"
             ):

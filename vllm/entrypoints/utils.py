@@ -346,7 +346,13 @@ def create_error_response(
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             param = None
 
-        message = str(exc)
+        if status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+            # Avoid leaking internal details (file paths, hostnames, config)
+            # in 500 responses. The full exception is already logged server-side.
+            logger.error("Internal error: %s: %s", type(exc).__name__, exc)
+            message = "Internal server error"
+        else:
+            message = str(exc)
 
     return ErrorResponse(
         error=ErrorInfo(
