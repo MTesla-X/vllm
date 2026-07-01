@@ -166,7 +166,8 @@ def detect_gguf_multimodal(model: str) -> Path | None:
             if mmproj_files:
                 return mmproj_files[0]
         return None
-    except Exception:
+    except (OSError, ValueError) as e:
+        logger.debug("Failed to detect GGUF multimodal projector for %s: %s", model, e)
         return None
 
 

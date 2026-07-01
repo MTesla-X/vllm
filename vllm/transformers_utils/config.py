@@ -945,6 +945,7 @@ def get_sentence_transformer_tokenizer_config(
             # If model is on HuggingfaceHub, get the repo files
             repo_files = list_repo_files(model, revision=revision)
         except Exception:
+            logger.debug("Failed to list repo files for %s", model, exc_info=True)
             repo_files = []
 
         for config_name in sentence_transformer_config_files:
@@ -1123,6 +1124,7 @@ def try_get_safetensors_metadata(
             get_safetensors_metadata_partial, "Error retrieving safetensors"
         )
     except Exception:
+        logger.debug("Failed to get safetensors metadata for %s", model, exc_info=True)
         return None
 
 
@@ -1138,6 +1140,11 @@ def try_get_tokenizer_config(
             revision=revision,
         )
     except Exception:
+        logger.debug(
+            "Failed to get tokenizer config for %s",
+            pretrained_model_name_or_path,
+            exc_info=True,
+        )
         return None
 
 
@@ -1174,6 +1181,7 @@ def try_get_dense_modules(
             layer_configs.append(layer_config)
         return layer_configs
     except Exception:
+        logger.debug("Failed to get dense modules for %s", model, exc_info=True)
         return None
 
 

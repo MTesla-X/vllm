@@ -2198,7 +2198,10 @@ class EngineArgs:
             device_memory = current_platform.get_device_total_memory()
             device_name = current_platform.get_device_name().lower()
         except Exception:
-            # This is only used to set default_max_num_batched_tokens
+            logger.debug(
+                "Failed to query device info for default max_num_batched_tokens",
+                exc_info=True,
+            )
             device_memory = 0
             device_name = ""
 

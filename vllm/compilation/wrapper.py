@@ -259,7 +259,11 @@ class TorchCompileWithNoGuardsWrapper:
 
                     logger.debug("Dynamo transformed code saved to %s", decompiled_file)
                 except Exception:
-                    pass
+                    logger.debug(
+                        "Failed to save Dynamo transformed code to %s",
+                        decompiled_file,
+                        exc_info=True,
+                    )
 
         if (
             self.vllm_config.compilation_config.cudagraph_mode != CUDAGraphMode.NONE

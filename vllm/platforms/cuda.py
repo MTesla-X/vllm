@@ -682,7 +682,11 @@ class NvmlCudaPlatform(CudaPlatformBase):
                 device_id,
             )
         except Exception:
-            pass
+            logger.debug(
+                "Failed to get NUMA node ID for GPU %d via NVML",
+                device_id,
+                exc_info=True,
+            )
 
         try:
             cpu_ids = cls._get_device_cpu_affinity(handle)

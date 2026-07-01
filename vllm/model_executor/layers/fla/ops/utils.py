@@ -172,7 +172,7 @@ def get_all_max_shared_mem():
             ]
             for i in range(device_torch_lib.device_count())
         ]
-    except BaseException:
+    except Exception:
         return [-1]
 
 

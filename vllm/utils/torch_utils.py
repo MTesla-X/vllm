@@ -790,7 +790,7 @@ def is_torch_equal_or_newer(target: str) -> bool:
     """
     try:
         return _is_torch_equal_or_newer(str(torch.__version__), target)
-    except Exception:
+    except (AttributeError, TypeError, ValueError):
         # Fallback to PKG-INFO to load the package info, needed by the doc gen.
         return Version(importlib.metadata.version("torch")) >= Version(target)
 
@@ -818,7 +818,7 @@ def is_torch_equal(target: str) -> bool:
     """
     try:
         return _is_torch_equal(target)
-    except Exception:
+    except (AttributeError, TypeError, ValueError):
         return Version(importlib.metadata.version("torch")) == Version(target)
 
 

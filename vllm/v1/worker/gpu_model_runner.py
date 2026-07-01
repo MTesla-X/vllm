@@ -5163,6 +5163,9 @@ class GPUModelRunner(
                 )
             return num_nans_in_logits
         except IndexError:
+            logger.debug(
+                "IndexError while computing NaN count in logits", exc_info=True
+            )
             return {}
 
     @contextmanager

@@ -2,7 +2,10 @@
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 # ruff: noqa: E402
 import importlib.util
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 
 
 def _get_torch_cuda_version():
@@ -33,6 +36,7 @@ def _get_torch_cuda_version():
         ver_spec.loader.exec_module(module)
         return getattr(module, "cuda", None)
     except Exception:
+        logger.debug("Failed to detect torch CUDA version", exc_info=True)
         return None
 
 

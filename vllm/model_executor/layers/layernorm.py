@@ -156,7 +156,7 @@ class RMSNorm(CustomOp):
                     from vllm.config import get_cached_compilation_config
 
                     custom_ops = get_cached_compilation_config().custom_ops
-                except Exception:
+                except (ImportError, AttributeError):
                     custom_ops = ["<unknown>"]
                 logger.warning_once(
                     "VLLM_USE_OINK_OPS=1 but the `rms_norm` custom op is "
